@@ -42,10 +42,12 @@
             </div>
             <div class="collapse navbar-collapse navbar-right" id="menu">
                 <ul class="nav navbar-nav">
-                    <li class=" lien"><a href="index.html"><i class="fa fa-home sr-icons"></i> Home</a></li>
-                    <li class="lien"><a href="about.html"><i class="fa fa-bookmark sr-icons"></i> About</a></li>
-                    <li class="active lien"><a href="blog.html"><i class="fa fa-file-text sr-icons"></i> Blog</a></li>
-                    <li><a href="contact.html"><i class="fa fa-phone-square sr-icons"></i> Contact</a></li>
+                    <li class=" lien"><a href="{{ path('index') }}"><i class="fa fa-home sr-icons"></i> Home</a></li>
+                    <li class="lien"><a href="{{ path('about') }}"><i class="fa fa-bookmark sr-icons"></i> About</a>
+                    </li>
+                    <li class="lien"><a href="{{ path('blog') }}"><i class="fa fa-file-text sr-icons"></i> Blog</a></li>
+                    <li class="active"><a href="{{ path('contact') }}"><i class="fa fa-phone-square sr-icons"></i>
+                            Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -94,21 +96,9 @@
                     </div>
                     <div class="col-xs-12 col-sm-3">
                         <h4>Recent Post</h4>
-                        <hr class="subtitle1">
-                        <div class="new new1">
-                            <hr>
-                            <a href="">Aliquam soluta</a>
-                            <h5> By <span>Quae</span></h5>
-                            <p>10 April</p><i class="fa fa-clock-o sr-icons"></i> 8:00 AM
-                            <hr>
-                        </div>
-                        <div class="new">
-                            <hr>
-                            <a href="">Consequuntur</a>
-                            <h5> By <span>Omnis</span></h5>
-                            <p>12 May</p><i class="fa fa-clock-o sr-icons"></i> 4:00 PM
-                            <hr>
-                        </div>
+                        {% for recent in recents %}
+                        {{ include ('partials/_recent_post.html.twig', {'recent': recent}) }}
+                        {% endfor %}
                     </div>
                 </div>
             </div>

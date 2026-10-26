@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-{% block body%}
+{% block body %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,11 +10,11 @@
     <title>PhotographItem-Responsive Theme | Blog</title>
 
     <!-- Bootstrap core css -->
-    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css">
-    <!-- Bootstrap core css -->
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+    <!-- Style css -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
     <!-- Font Awesome icons -->
-    <link rel="stylesheet" type="text/css" href="font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -42,11 +42,12 @@
             </div>
             <div class="collapse navbar-collapse navbar-right" id="menu">
                 <ul class="nav navbar-nav">
-                    <li class=" lien"><a href="{{ path('index')}}"><i class="fa fa-home sr-icons"></i> Home</a></li>
-                    <li class="lien"><a href="{{ path('about')}}"><i class="fa fa-bookmark sr-icons"></i> About</a></li>
-                    <li class="active lien"><a href="{{ path('blog')}}"><i class="fa fa-file-text sr-icons"></i>
+                    <li class="lien"><a href="{{ path('index') }}"><i class="fa fa-home sr-icons"></i> Home</a></li>
+                    <li class="lien"><a href="{{ path('about') }}"><i class="fa fa-bookmark sr-icons"></i> About</a>
+                    </li>
+                    <li class="active lien"><a href="{{ path('blog') }}"><i class="fa fa-file-text sr-icons"></i>
                             Blog</a></li>
-                    <li><a href="{{ path('contact')}}"><i class="fa fa-phone-square sr-icons"></i> Contact</a></li>
+                    <li><a href="{{ path('contact') }}"><i class="fa fa-phone-square sr-icons"></i> Contact</a></li>
                 </ul>
             </div>
         </div>
@@ -57,89 +58,18 @@
     <div id="blog">
         <div class="container">
             <div class="row">
-
-                <!-- Blocks of Posts -->
-                <div class="col-xs-12 col-sm-8 row">
-                    <div class="col-xs-12 col-sm-12">
-                        <div class="post">
-                            <div class="post-heading">
-                                <span>6 JANUARY</span>
-                                <img class="img-responsive" src="images/blog/landscape.jpg" alt="post's picture">
-                            </div>
-                            <div class="post-body">
-                                <h3><a href="single_post.html"><strong>doloremque illum</strong></a></h3>
-                                <hr>
-                                <p>Duis ultrices tortor non felis convallis bibendum. Maecenas diam velit, sollicitudin
-                                    at imperdiet ac, consectetur non nibh. Etiam eget dapibus nulla.
-                                </p>
-                            </div>
-                            <div class="post-footer">
-                                <a class="btn" href="single_post.html">READ MORE...</a>
-                                <span>
-                                    <i class="fa fa-heart sr-icons"></i> 10
-                                    <i class="fa fa-comments sr-icons"></i> 10
-                                </span>
-                            </div>
+                <!-- Listado dinámico de posts -->
+                <div class="col-xs-12 col-sm-8">
+                    <div class="row">
+                        {% for post in posts %}
+                        {{ include('partials/_post.html.twig', {'post': post}) }}
+                        {% else %}
+                        <div class="col-xs-12">
+                            <p class="text-center">No hay posts publicados todavía.</p>
                         </div>
+                        {% endfor %}
                     </div>
-                    <div class="col-xs-12 col-sm-12">
-                        <div class="post">
-                            <div class="post-heading">
-                                <span>7 FEBRUARY</span>
-                                <img class="img-responsive" src="images/blog/family.jpg" alt="post's picture">
-                            </div>
-                            <div class="post-body">
-                                <h3><a href="single_post.html"><strong>Lorem ipsum</strong></a></h3>
-                                <hr>
-                                <p>Nunc sit amet dapibus est, sit amet varius risus. Donec luctus lacinia mauris, at
-                                    feugiat ligula facilisis ac. Class aptent taciti sociosqu ad litora torquent per
-                                    conubia.
-                                </p>
-                            </div>
-                            <div class="post-footer">
-                                <a class="btn" href="single_post.html">READ MORE...</a>
-                                <span>
-                                    <i class="fa fa-heart sr-icons"></i> 10
-                                    <i class="fa fa-comments sr-icons"></i> 10
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xs-12 col-sm-12">
-                        <div class="post">
-                            <div class="post-heading">
-                                <span>8 MARCH</span>
-                                <img class="img-responsive" src="images/blog/elephant.jpg" alt="post's picture">
-                            </div>
-                            <div class="post-body">
-                                <h3><a href="single_post.html"><strong>Aliquam soluta</strong></a></h3>
-                                <hr>
-                                <p>In felis ante, aliquet sit amet venenatis at, feugiat sed leo. Fusce pretium, velit
-                                    in luctus ornare, elit lorem ultrices tortor, sed consectetur orci risus mollis
-                                    ante.
-                                </p>
-                            </div>
-                            <div class="post-footer">
-                                <a class="btn" href="single_post.html">READ MORE...</a>
-                                <span>
-                                    <i class="fa fa-heart sr-icons"></i> 10
-                                    <i class="fa fa-comments sr-icons"></i> 10
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <nav class="text-left">
-                        <ul class="pagination">
-                            <li class="active"><a href="#">1</a></li>
-                            <li><a href="#">2</a></li>
-                            <li><a href="#">3</a></li>
-                            <li><a href="#" aria-label="suivant">
-                                    <span aria-hidden="true">&raquo;</span>
-                                </a></li>
-                        </ul>
-                    </nav>
                 </div>
-                <!-- End of Blog Post -->
 
                 <!-- Side bar -->
                 <div class="col-xs-12 col-sm-4">
@@ -174,27 +104,28 @@
                     <div class="post">
                         <div class="post-heading">
                             <span>10 APRIL</span>
-                            <img class="img-responsive" src="images/blog/wedding.jpg" alt="post's picture">
+                            <img class="img-responsive" src="{{ asset('images/blog/wedding.jpg') }}"
+                                alt="post's picture">
                         </div>
                         <div class="post-body">
                             <span>
                                 <i class="fa fa-heart sr-icons"></i> 10
                                 <i class="fa fa-comments sr-icons"></i> 10
                             </span>
-                            <h4 class="text-left"><a href="single_post.html"><strong>Aliquam soluta</strong></a></h4>
+                            <h4 class="text-left"><a href="#"><strong>Aliquam soluta</strong></a></h4>
                         </div>
                     </div>
                     <div class="post">
                         <div class="post-heading">
                             <span>12 MAY</span>
-                            <img class="img-responsive" src="images/blog/woman.jpg" alt="post's picture">
+                            <img class="img-responsive" src="{{ asset('images/blog/woman.jpg') }}" alt="post's picture">
                         </div>
                         <div class="post-body">
                             <span>
                                 <i class="fa fa-heart sr-icons"></i> 10
                                 <i class="fa fa-comments sr-icons"></i> 10
                             </span>
-                            <h4 class="text-left"><a href="single_post.html"><strong>Consequuntur</strong></a></h4>
+                            <h4 class="text-left"><a href="#"><strong>Consequuntur</strong></a></h4>
                         </div>
                     </div>
                 </div>
@@ -209,12 +140,9 @@
     <footer>
         <div class="container text-muted text-center">
             <ul class="list-inline social-buttons">
-                <li><a href="#"><i class="fa fa-facebook sr-icons"></i></a>
-                </li>
-                <li><a href="#"><i class="fa fa-twitter sr-icons"></i></a>
-                </li>
-                <li><a href="#"><i class="fa fa-google-plus sr-icons"></i></a>
-                </li>
+                <li><a href="#"><i class="fa fa-facebook sr-icons"></i></a></li>
+                <li><a href="#"><i class="fa fa-twitter sr-icons"></i></a></li>
+                <li><a href="#"><i class="fa fa-google-plus sr-icons"></i></a></li>
             </ul>
             <ul class="list-inline">
                 <li class="footer-number"><i class="fa fa-phone sr-icons"></i> (00228)92229954 </li>
@@ -225,14 +153,14 @@
     </footer>
 
     <!-- Jquery -->
-    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.min.js') }}"></script>
     <!-- Bootstrap core Javascript -->
-    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="{{ asset('bootstrap/js/bootstrap.min.js') }}"></script>
     <!-- Plugins -->
-    <script type="text/javascript" src="js/jquery.easing.min.js"></script>
-    <script type="text/javascript" src="js/jquery.magnific-popup.min.js"></script>
-    <script type="text/javascript" src="js/scrollreveal.min.js"></script>
-    <script type="text/javascript" src="js/script.js"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.easing.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/scrollreveal.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/script.js') }}"></script>
 </body>
 
 </html>

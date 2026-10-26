@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Post{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<link rel="stylesheet" type="text/css" href="{{ asset('bootstrap/css/bootstrap.min.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('css/style.css') }}">
+<link rel="stylesheet" type="text/css" href="{{ asset('font-awesome/css/font-awesome.min.css') }}">
+{% endblock %}
+
+{% block body %}
+<!-- Principal Content Start -->
+<div id="new-post">
+    <div class="container">
+        <div class="col-xs-12 col-sm-8 col-sm-push-2">
+            <h1>New Post</h1>
+
+            {{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+            {{ form_errors(form) }}
+
+            <div class="form-group">
+                {{ form_label(form.title, 'Title', {'label_attr': {'class': 'control-label'}}) }}
+                {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                {{ form_errors(form.title) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.content, 'Content', {'label_attr': {'class': 'control-label'}}) }}
+                {{ form_widget(form.content, {'attr': {'class': 'form-control', 'rows': '4'}}) }}
+                {{ form_errors(form.content) }}
+            </div>
+
+            <div class="form-group">
+                {{ form_label(form.image, 'Image', {'label_attr': {'class': 'control-label'}}) }}
+                {{ form_widget(form.image) }}
+                {{ form_errors(form.image) }}
+            </div>
+
+            <hr class="divider">
+
+            <div class="form-group text-right">
+                {{ form_widget(form.Send, {'attr': {'class': 'btn btn-default'}}) }}
+            </div>
+
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>
+<!-- Principal Content End -->
+{% endblock %}
