@@ -13,7 +13,10 @@ use App\Entity\Category;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Entity\Post;
 use App\Form\PostFormType;
+use App\Entity\Comment;
+use App\Form\CommentFormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 final class PageController extends AbstractController
 {
@@ -94,7 +97,6 @@ final class PageController extends AbstractController
                         $newFilename
                     );
                 } catch (FileException $e) {
-                    // Manejar excepción si ocurre un error al subir el archivo
                 }
 
                 $post->setImage($newFilename);
@@ -121,16 +123,38 @@ final class PageController extends AbstractController
     }
 
     #[Route('/single_post/{slug}', name: 'single_post')]
-    public function post(ManagerRegistry $doctrine, $slug): Response
+    public function post(ManagerRegistry $doctrine, Request $request, $slug): Response
     {
         $repository = $doctrine->getRepository(Post::class);
         $post = $repository->findOneBy(["slug" => $slug]);
         $recents = $repository->findRecents();
+
+        $commentRepository = $doctrine->getRepository(Comment::class);
+        $recentComments = $commentRepository->findBy([], ['publishedAt' => 'DESC'], 5);
+
+        $comment = new Comment();
+        $form = $this->createForm(CommentFormType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $comment = $form->getData();
+            $comment->setPost($post);
+            $post->setNumComments($post->getNumComments() + 1);
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($comment);
+            $entityManager->flush();
+            return $this->redirectToRoute('single_post', ["slug" => $post->getSlug()]);
+        }
+
         return $this->render('blog/single_post.html.twig', [
             'post' => $post,
-            'recents' => $recents
+            'recents' => $recents,
+            'recentComments' => $recentComments,
+            'commentForm' => $form->createView()
         ]);
     }
+
+
 
     #[Route('/blog/{page}', name: 'blog', requirements: ['page' => '\d+'])]
     public function blogPage(ManagerRegistry $doctrine, int $page = 1): Response
@@ -142,6 +166,4 @@ final class PageController extends AbstractController
             'posts' => $posts,
         ]);
     }
-
-
 }
