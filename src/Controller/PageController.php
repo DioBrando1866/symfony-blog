@@ -17,6 +17,8 @@ use App\Entity\Comment;
 use App\Form\CommentFormType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 
 final class PageController extends AbstractController
 {
@@ -154,16 +156,92 @@ final class PageController extends AbstractController
         ]);
     }
 
-
+    private const POSTS_PER_PAGE = 1;
 
     #[Route('/blog/{page}', name: 'blog', requirements: ['page' => '\d+'])]
     public function blogPage(ManagerRegistry $doctrine, int $page = 1): Response
     {
+        $page = max(1, $page);
+
         $repository = $doctrine->getRepository(Post::class);
-        $posts = $repository->findAll($page);
+        //Aquí obtenemos los datos con el método creado en el repositorio
+        $posts = $repository->findPaginados($page, self::POSTS_PER_PAGE);
+        $recents = $repository->findRecents();
+
+        $total = count($posts);
+        $totalPages = max(1, (int) ceil($total / self::POSTS_PER_PAGE));
+
+        // Si piden una página que no existe, redirigimos a la última
+        if ($page > $totalPages) {
+            return $this->redirectToRoute('blog', ['page' => $totalPages]);
+        }
 
         return $this->render('blog.html.twig', [
             'posts' => $posts,
+            'recents' => $recents,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
         ]);
     }
+
+    #[Route('/blog/buscar/{page}', name: 'blog_buscar')]
+    public function buscar(ManagerRegistry $doctrine, Request $request, int $page = 1): Response
+    {
+        $page = max(1, $page);
+
+        $repository = $doctrine->getRepository(Post::class);
+        $searchTerm = $request->query->get('searchTerm', '');
+        $posts = $repository->findBuscadosPaginados($searchTerm, $page, self::POSTS_PER_PAGE);
+        $recents = $repository->findRecents();
+
+        $total = count($posts);
+        $totalPages = max(1, (int) ceil($total / self::POSTS_PER_PAGE));
+
+        // Si piden una página que no existe, redirigimos a la última (conservando la búsqueda)
+        if ($page > $totalPages) {
+            return $this->redirectToRoute('blog_buscar', ['page' => $totalPages, 'searchTerm' => $searchTerm]);
+        }
+
+        return $this->render('blog.html.twig', [
+            'posts' => $posts,
+            'recents' => $recents,
+            'searchTerm' => $searchTerm,
+            'page' => $page,
+            'totalPages' => $totalPages,
+            'total' => $total,
+        ]);
+    }
+
+    #[Route('/single_post/{slug}/like', name: 'post_like')]
+    public function like(ManagerRegistry $doctrine, $slug): JsonResponse
+    {
+        $repository = $doctrine->getRepository(Post::class);
+        $post = $repository->findOneBy(["slug" => $slug]);
+        if ($post) {
+            $post->like();
+            $entityManager = $doctrine->getManager();
+            $entityManager->persist($post);
+            $entityManager->flush();
+        }
+        $data = ['success' => true, 'likes' => $post->getNumLikes()];
+        return $this->json($data);
+
+    }
+
+    #[Route('/blog/buscar', name: 'blog_buscar_post')]
+    public function buscarPost(ManagerRegistry $doctrine, Request $request): Response
+    {
+        $repository = $doctrine->getRepository(Post::class);
+        $searchTerm = $request->query->get('searchTerm', '');
+        $posts = $repository->findByText($searchTerm);
+        $recents = $repository->findRecents();
+        return $this->render('blog.html.twig', [
+            'posts' => $posts,
+            'recents' => $recents,
+            'searchTerm' => $searchTerm
+        ]);
+    }
+
+
 }

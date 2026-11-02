@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 
 /**
  * @extends ServiceEntityRepository<Post>
@@ -41,30 +42,43 @@ class PostRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findPaginados(int $page, int $perPage): Paginator
+    {
+        $query = $this->createQueryBuilder('p')
+            ->orderBy('p.publishedAt', 'DESC')
+            ->setFirstResult(($page - 1) * $perPage)
+            ->setMaxResults($perPage)
+            ->getQuery();
 
+        return new Paginator($query, false);
+    }
 
-    //    /**
-    //     * @return Post[] Returns an array of Post objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Página $page de los posts cuyo título o contenido contienen $searchTerm.
+     */
+    public function findBuscadosPaginados(string $searchTerm, int $page, int $perPage): Paginator
+    {
+        $query = $this->createQueryBuilder('p')
+            ->andWhere('p.title LIKE :val OR p.content LIKE :val')
+            ->setParameter('val', '%' . $searchTerm . '%')
+            ->orderBy('p.publishedAt', 'DESC')
+            ->setFirstResult(($page - 1) * $perPage)
+            ->setMaxResults($perPage)
+            ->getQuery();
 
-    //    public function findOneBySomeField($value): ?Post
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+        return new Paginator($query, false);
+    }
+
+    /**
+     * @return Post[] Returns an array of Post objects
+     */
+    public function findByText(string $searchTerm): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.title LIKE :val OR p.content LIKE :val')
+            ->setParameter('val', '%' . $searchTerm . '%')
+            ->orderBy('p.publishedAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

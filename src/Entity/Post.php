@@ -182,4 +182,10 @@ class Post
         return $this;
     }
 
+    public function like(): static
+    {
+        $this->numLikes++;
+
+        return $this;
+    }
 }
